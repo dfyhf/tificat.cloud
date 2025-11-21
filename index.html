@@ -155,7 +155,7 @@
 
       .logo-frame {
         position: relative;
-        padding: 2.5rem 2.5rem 2.8rem; /* back to earlier bottom padding */
+        padding: 2.5rem 2.5rem 2.8rem;
         border-radius: 32px;
         background: radial-gradient(
             circle at 0% 0%,
@@ -171,7 +171,7 @@
         box-shadow: 0 40px 80px rgba(0, 0, 0, 0.75),
           0 0 0 1px rgba(255, 255, 255, 0.05);
         backdrop-filter: blur(22px);
-        overflow: hidden; /* clips glow to inner border */
+        overflow: hidden;
       }
 
       .logo-frame::before {
@@ -182,6 +182,14 @@
         border: 1px solid rgba(255, 255, 255, 0.08);
         opacity: 0.9;
         pointer-events: none;
+      }
+
+      /* NEW: clip container that matches the inner border */
+      .logo-clip {
+        position: relative;
+        margin: 22px;
+        border-radius: 26px;
+        overflow: hidden;
       }
 
       .logo-inner {
@@ -255,7 +263,7 @@
         text-shadow: 0 0 18px rgba(0, 0, 0, 0.75);
         line-height: 1.05;
         margin-top: 1.1rem;
-        margin-bottom: 1.7rem; /* reduced to keep card height same-ish */
+        margin-bottom: 1.7rem;
       }
 
       @media (max-width: 700px) {
@@ -268,6 +276,10 @@
         }
         .logo-frame::before {
           inset: 16px;
+          border-radius: 20px;
+        }
+        .logo-clip {
+          margin: 16px;
           border-radius: 20px;
         }
         .logo-glow::before {
@@ -292,15 +304,17 @@
 
     <main class="shell">
       <section class="logo-frame" aria-label="TIFICAT logo">
-        <div class="logo-inner">
-          <div class="logo-glow">
-            <img
-              src="Tifi Cat.png"
-              alt="TIFICAT logo - stylized purple tortoiseshell cat"
-              class="logo-img"
-            />
+        <div class="logo-clip">
+          <div class="logo-inner">
+            <div class="logo-glow">
+              <img
+                src="Tifi Cat.png"
+                alt="TIFICAT logo - stylized purple tortoiseshell cat"
+                class="logo-img"
+              />
+            </div>
+            <h1>CLOUD SERVICES</h1>
           </div>
-          <h1>CLOUD SERVICES</h1>
         </div>
       </section>
     </main>
