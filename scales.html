@@ -1,182 +1,308 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
   <head>
-    <meta charset="utf-8" />
+    <meta charset="UTF-8" />
+    <title>TIFICAT</title>
     <meta
       name="viewport"
       content="width=device-width, initial-scale=1, viewport-fit=cover"
     />
-    <title>Next Scale</title>
     <style>
-      /* Reset and base */
-      html,
-      body {
-        height: 100%;
+      :root {
+        --bg-deep: #0b0420;
+        --bg-mid: #241050;
+        --bg-pop: #ff5edc;
+        --bg-pop-2: #7c4dff;
+        --text-main: #e5dbff;
       }
+
       * {
         box-sizing: border-box;
+        margin: 0;
+        padding: 0;
       }
+
       body {
-        margin: 0;
-        color: #e8eaed;
-        background: #0d0f14;
-        /* Layered textural background using only CSS */
-        background-image:
-          radial-gradient(
-            1200px 800px at 20% 10%,
-            rgba(255, 255, 255, 0.06),
-            rgba(0, 0, 0, 0) 60%
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: radial-gradient(circle at 0% 0%, #341566 0, #0b0420 45%)
+            no-repeat,
+          radial-gradient(circle at 100% 100%, #301049 0, #050014 55%) no-repeat,
+          var(--bg-deep);
+        overflow: hidden;
+        color: var(--text-main);
+        font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+          sans-serif;
+      }
+
+      .bg-layer {
+        position: fixed;
+        inset: -20vh;
+        pointer-events: none;
+        z-index: -2;
+        background: radial-gradient(
+            circle at 20% 30%,
+            rgba(255, 94, 220, 0.28),
+            transparent 55%
           ),
           radial-gradient(
-            900px 600px at 80% 30%,
-            rgba(255, 255, 255, 0.04),
-            rgba(0, 0, 0, 0) 65%
-          ),
-          radial-gradient(
-            700px 500px at 30% 80%,
-            rgba(255, 255, 255, 0.035),
-            rgba(0, 0, 0, 0) 60%
-          ),
-          /* subtle fiber/noise feel with repeating linear gradients */
-          repeating-linear-gradient(
-            135deg,
-            rgba(255, 255, 255, 0.02) 0px,
-            rgba(255, 255, 255, 0.02) 1px,
-            rgba(0, 0, 0, 0) 2px,
-            rgba(0, 0, 0, 0) 5px
-          ),
-          radial-gradient(
-            circle at 50% 50%,
-            rgba(255, 255, 255, 0.015) 0%,
-            rgba(0, 0, 0, 0) 60%
+            circle at 80% 70%,
+            rgba(124, 77, 255, 0.3),
+            transparent 55%
           );
-        background-blend-mode: screen, screen, screen, overlay, normal;
-        display: grid;
-        place-items: center;
-        font-family: ui-rounded, ui-sans-serif, system-ui, -apple-system,
-          "Segoe UI", "Helvetica Neue", "Noto Sans", "Liberation Sans",
-          "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", sans-serif;
+        mix-blend-mode: screen;
+        animation: drift 36s linear infinite alternate;
       }
 
-      /* Container */
-      .wrap {
-        padding: 40px 24px;
-        width: min(90vw, 840px);
-        display: grid;
-        gap: 28px;
-        justify-items: center;
-      }
-
-      /* Title in a stylish, bold, rounded display look (no external font) */
-      .title {
-        margin: 0;
-        font-size: clamp(28px, 5vw, 64px);
-        line-height: 1.05;
-        letter-spacing: 0.02em;
-        font-weight: 800;
-        text-transform: none;
-        /* Subtle multi-layered glow for epic feel */
-        text-shadow:
-          0 1px 0 rgba(255, 255, 255, 0.02),
-          0 6px 20px rgba(0, 150, 255, 0.08),
-          0 12px 40px rgba(0, 150, 255, 0.08);
-        background: linear-gradient(
-          180deg,
-          #eaf2ff 0%,
-          #d5e2ff 30%,
-          #c7d6ff 60%,
-          #a2baff 100%
+      .bg-layer::before,
+      .bg-layer::after {
+        content: "";
+        position: absolute;
+        width: 90vmax;
+        height: 90vmax;
+        border-radius: 40% 60% 55% 45%;
+        background: radial-gradient(
+          circle at 30% 30%,
+          rgba(255, 94, 220, 0.18),
+          transparent 60%
         );
-        -webkit-background-clip: text;
-        background-clip: text;
-        color: transparent;
+        filter: blur(40px);
+        opacity: 0.8;
       }
 
-      .subtitle {
-        margin: -10px 0 0 0;
-        font-size: clamp(14px, 2vw, 18px);
-        color: #aab3c0;
-        opacity: 0.9;
+      .bg-layer::before {
+        top: -10%;
+        left: -15%;
+        animation: morph 40s ease-in-out infinite alternate;
+      }
+
+      .bg-layer::after {
+        bottom: -20%;
+        right: -10%;
+        background: radial-gradient(
+          circle at 70% 70%,
+          rgba(124, 77, 255, 0.22),
+          transparent 60%
+        );
+        animation: morph 46s ease-in-out infinite alternate-reverse;
+      }
+
+      .grain {
+        position: fixed;
+        inset: -20px;
+        z-index: -1;
+        pointer-events: none;
+        opacity: 0.15;
+        mix-blend-mode: soft-light;
+        background-image: url("data:image/svg+xml,\
+          <svg xmlns='http://www.w3.org/2000/svg' width='160' height='160' viewBox='0 0 160 160'>\
+            <filter id='n'>\
+              <feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='noStitch'/>\
+            </filter>\
+            <rect width='100%' height='100%' filter='url(%23n)' opacity='0.55'/>\
+          </svg>");
+        animation: grainShift 8s steps(10) infinite;
+      }
+
+      @keyframes drift {
+        0% {
+          transform: translate3d(-10px, 10px, 0) scale(1.02);
+        }
+        50% {
+          transform: translate3d(10px, -20px, 0) scale(1.05);
+        }
+        100% {
+          transform: translate3d(-15px, 5px, 0) scale(1.02);
+        }
+      }
+
+      @keyframes morph {
+        0% {
+          border-radius: 40% 60% 55% 45%;
+          transform: translate3d(0, 0, 0) scale(1);
+        }
+        50% {
+          border-radius: 60% 40% 45% 55%;
+          transform: translate3d(20px, -30px, 0) scale(1.08);
+        }
+        100% {
+          border-radius: 55% 45% 60% 40%;
+          transform: translate3d(-15px, 20px, 0) scale(1.03);
+        }
+      }
+
+      @keyframes grainShift {
+        0% {
+          transform: translate3d(0, 0, 0);
+        }
+        100% {
+          transform: translate3d(-40px, 30px, 0);
+        }
+      }
+
+      .shell {
+        position: relative;
+        padding: 3rem 1.5rem;
+        width: min(100%, 960px);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
         text-align: center;
       }
 
-      /* Button wrapper adds a subtle hover glow without modifying the PNG */
-      .button-wrap {
+      .logo-frame {
         position: relative;
-        display: inline-grid;
-        place-items: center;
-        transition: transform 180ms ease;
-      }
-      .button-wrap:hover {
-        transform: translateY(-1px);
-      }
-      .button-glow {
-        position: absolute;
-        inset: -18px;
-        border-radius: 24px;
-        filter: blur(22px);
+        padding: 2.5rem 2.5rem 2.8rem; /* back to earlier bottom padding */
+        border-radius: 32px;
         background: radial-gradient(
-          60% 60% at 50% 50%,
-          rgba(64, 160, 255, 0.18) 0%,
-          rgba(64, 160, 255, 0.05) 40%,
-          rgba(0, 0, 0, 0) 70%
-        );
-        opacity: 0.0;
-        transition: opacity 200ms ease;
+            circle at 0% 0%,
+            rgba(255, 255, 255, 0.04),
+            transparent 55%
+          ),
+          radial-gradient(
+            circle at 120% 120%,
+            rgba(0, 0, 0, 0.55),
+            transparent 60%
+          ),
+          rgba(5, 0, 15, 0.75);
+        box-shadow: 0 40px 80px rgba(0, 0, 0, 0.75),
+          0 0 0 1px rgba(255, 255, 255, 0.05);
+        backdrop-filter: blur(22px);
+        overflow: hidden; /* clips glow to inner border */
+      }
+
+      .logo-frame::before {
+        content: "";
+        position: absolute;
+        inset: 22px;
+        border-radius: 26px;
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        opacity: 0.9;
         pointer-events: none;
       }
-      .button-wrap:hover .button-glow {
-        opacity: 1;
+
+      .logo-inner {
+        position: relative;
+        z-index: 1;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 0.7rem;
       }
 
-      /* The PNG button itself */
-      .button {
-        width: clamp(220px, 28vw, 380px);
-        height: auto;
+      .logo-glow {
+        position: relative;
+        display: inline-block;
+      }
+
+      .logo-glow::before {
+        content: "";
+        position: absolute;
+        inset: -6%;
+        border-radius: 50%;
+        background:
+          radial-gradient(
+            circle at 50% 40%,
+            rgba(229, 219, 255, 0.75),
+            rgba(229, 219, 255, 0.2) 40%,
+            transparent 70%
+          ),
+          radial-gradient(
+            circle at 40% 80%,
+            rgba(229, 219, 255, 0.45),
+            rgba(229, 219, 255, 0.12) 45%,
+            transparent 75%
+          );
+        filter: blur(12px);
+        opacity: 0.75;
+        mix-blend-mode: screen;
+        pointer-events: none;
+      }
+
+      .logo-img {
         display: block;
-        border-radius: 20px; /* keeps anti-aliased corners blending with bg */
-        image-rendering: auto;
-        box-shadow:
-          0 2px 10px rgba(0, 0, 0, 0.45),
-          0 10px 30px rgba(0, 0, 0, 0.35);
+        max-width: min(100%, 520px);
+        height: auto;
+        margin: 0 auto;
+        filter: drop-shadow(0 14px 26px rgba(0, 0, 0, 0.78));
+        animation: float 7s ease-in-out infinite;
+        position: relative;
+        z-index: 1;
       }
 
-      /* Optional caption under the button */
-      .hint {
-        margin-top: 6px;
-        font-size: 13px;
-        color: #8f98a6;
+      @keyframes float {
+        0%,
+        100% {
+          transform: translate3d(0, 0, 0);
+        }
+        50% {
+          transform: translate3d(0, -10px, 0);
+        }
       }
 
-      /* Respect reduced motion */
-      @media (prefers-reduced-motion: reduce) {
-        .button-wrap,
-        .button-glow {
-          transition: none !important;
+      h1 {
+        font-family: "Trebuchet MS", "Segoe UI Rounded", system-ui,
+          -apple-system, BlinkMacSystemFont, sans-serif;
+        font-weight: 900;
+        font-size: clamp(3rem, 5vw, 4rem);
+        letter-spacing: 0.18em;
+        text-indent: 0.18em;
+        text-transform: uppercase;
+        color: var(--text-main);
+        text-shadow: 0 0 18px rgba(0, 0, 0, 0.75);
+        line-height: 1.05;
+        margin-top: 1.1rem;
+        margin-bottom: 1.7rem; /* reduced to keep card height same-ish */
+      }
+
+      @media (max-width: 700px) {
+        body {
+          padding: 1.25rem;
+        }
+        .logo-frame {
+          padding: 1.75rem 1.75rem 2.1rem;
+          border-radius: 24px;
+        }
+        .logo-frame::before {
+          inset: 16px;
+          border-radius: 20px;
+        }
+        .logo-glow::before {
+          inset: -10%;
+          filter: blur(14px);
+        }
+        .logo-img {
+          max-width: 100%;
+        }
+        h1 {
+          font-size: 2.4rem;
+          letter-spacing: 0.16em;
+          margin-top: 1rem;
+          margin-bottom: 1.4rem;
         }
       }
     </style>
   </head>
   <body>
-    <main class="wrap">
-      <h1 class="title">Next Scale</h1>
-      <p class="subtitle">Epic, tasteful, and ready for your UI</p>
+    <div class="bg-layer"></div>
+    <div class="grain"></div>
 
-      <a class="button-wrap" href="#" aria-label="Next Scale">
-        <span class="button-glow" aria-hidden="true"></span>
-        <!-- If you truly need 'button.ong', change src and alt filename below -->
-        <img
-          class="button"
-          src="button.png.jpg"
-          width="760"
-          height="300"
-          alt="Button graphic: Next line break Scale"
-          decoding="async"
-          loading="eager"
-        />
-      </a>
-
-      <div class="hint">Place your button.png alongside this HTML file.</div>
+    <main class="shell">
+      <section class="logo-frame" aria-label="TIFICAT logo">
+        <div class="logo-inner">
+          <div class="logo-glow">
+            <img
+              src="Tifi Cat.png"
+              alt="TIFICAT logo - stylized purple tortoiseshell cat"
+              class="logo-img"
+            />
+          </div>
+          <h1>CLOUD SERVICES</h1>
+        </div>
+      </section>
     </main>
   </body>
 </html>
