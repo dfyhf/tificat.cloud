@@ -2,10 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <meta
-      name="viewport"
-      content="width=device-width, initial-scale=1, viewport-fit=cover"
-    />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Next Scale</title>
     <style>
       html,
@@ -19,7 +16,7 @@
         margin: 0;
         color: #e8eaed;
         background: #0d0f14;
-        /* Dark, textural background purely with CSS */
+        /* Dark textural background via CSS only */
         background-image: radial-gradient(
             1200px 800px at 20% 10%,
             rgba(255, 255, 255, 0.06),
@@ -50,33 +47,35 @@
         background-blend-mode: screen, screen, screen, overlay, normal;
         display: grid;
         place-items: center;
-        font-family: ui-rounded, ui-sans-serif, system-ui, -apple-system,
-          "Segoe UI", "Helvetica Neue", "Noto Sans", "Liberation Sans",
-          "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", sans-serif;
+        padding: 6vh 4vw;
+        /* Cooler, less bubbly display font stack (no CDN) */
+        font-family: "SF Pro Display", "Segoe UI Variable Display",
+          "Segoe UI", Inter, system-ui, -apple-system, Arial, "Helvetica Neue",
+          Roboto, "Noto Sans", sans-serif;
       }
 
       .wrap {
-        padding: 40px 24px;
         width: min(92vw, 900px);
         display: grid;
         gap: 28px;
         justify-items: center;
       }
 
-      /* Result area: big, bold, clean */
+      /* Result on top: larger (about 2×), sharper look */
       #result {
         margin: 0;
         text-align: center;
         font-weight: 900;
-        letter-spacing: 0.01em;
-        line-height: 1.06;
-        font-size: clamp(36px, 8vw, 88px);
-        color: #eef3ff;
-        text-shadow: 0 2px 18px rgba(90, 160, 255, 0.18);
-        min-height: 1.2em; /* reserve space before first press */
+        letter-spacing: 0.005em;
+        line-height: 1.02;
+        font-size: clamp(48px, 12vw, 140px); /* bigger than before ~2x */
+        color: #f1f5ff;
+        text-shadow: 0 4px 28px rgba(90, 160, 255, 0.22),
+          0 1px 0 rgba(255, 255, 255, 0.05);
+        min-height: 1.1em; /* keep layout stable before first press */
       }
 
-      /* Real button element that displays the PNG */
+      /* PNG button */
       .png-button {
         border: none;
         background: transparent;
@@ -140,7 +139,10 @@
   </head>
   <body>
     <main class="wrap">
-      <!-- Button -->
+      <!-- RESULT ABOVE THE BUTTON -->
+      <div id="result" aria-live="polite" aria-atomic="true"></div>
+
+      <!-- BUTTON -->
       <button id="nextScaleBtn" class="png-button" type="button" aria-label="Next Scale">
         <span class="button-glow" aria-hidden="true"></span>
         <img
@@ -153,9 +155,6 @@
           loading="eager"
         />
       </button>
-
-      <!-- Result (separate element, large and bold) -->
-      <div id="result" aria-live="polite" aria-atomic="true"></div>
     </main>
 
     <script>
@@ -189,13 +188,10 @@
         function activate() {
           const pair = randomPair();
           render(pair);
-
-          // quick visual feedback
           btn.dataset.pressed = "true";
           setTimeout(() => (btn.dataset.pressed = "false"), 160);
         }
 
-        // Event wiring
         btn.addEventListener("click", (e) => {
           e.preventDefault();
           activate();
@@ -207,8 +203,8 @@
           }
         });
 
-        // Optional: initial placeholder
-        result.textContent = "";
+        // Optional: render one on load
+        render(randomPair());
       })();
     </script>
   </body>
