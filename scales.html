@@ -2,115 +2,181 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <title>ScaleSelector</title>
     <meta
       name="viewport"
       content="width=device-width, initial-scale=1, viewport-fit=cover"
     />
+    <title>Next Scale</title>
     <style>
-      :root {
-        --font-stack: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
-          Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji",
-          "Segoe UI Symbol";
-      }
+      /* Reset and base */
       html,
       body {
         height: 100%;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      body {
         margin: 0;
-        padding: 0;
-        background: #ffffff;
-        color: #000000;
-        font-family: var(--font-stack);
-      }
-      .wrap {
-        min-height: 100%;
+        color: #e8eaed;
+        background: #0d0f14;
+        /* Layered textural background using only CSS */
+        background-image:
+          radial-gradient(
+            1200px 800px at 20% 10%,
+            rgba(255, 255, 255, 0.06),
+            rgba(0, 0, 0, 0) 60%
+          ),
+          radial-gradient(
+            900px 600px at 80% 30%,
+            rgba(255, 255, 255, 0.04),
+            rgba(0, 0, 0, 0) 65%
+          ),
+          radial-gradient(
+            700px 500px at 30% 80%,
+            rgba(255, 255, 255, 0.035),
+            rgba(0, 0, 0, 0) 60%
+          ),
+          /* subtle fiber/noise feel with repeating linear gradients */
+          repeating-linear-gradient(
+            135deg,
+            rgba(255, 255, 255, 0.02) 0px,
+            rgba(255, 255, 255, 0.02) 1px,
+            rgba(0, 0, 0, 0) 2px,
+            rgba(0, 0, 0, 0) 5px
+          ),
+          radial-gradient(
+            circle at 50% 50%,
+            rgba(255, 255, 255, 0.015) 0%,
+            rgba(0, 0, 0, 0) 60%
+          );
+        background-blend-mode: screen, screen, screen, overlay, normal;
         display: grid;
-        grid-template-rows: 1fr auto 1fr;
-        align-items: center;
+        place-items: center;
+        font-family: ui-rounded, ui-sans-serif, system-ui, -apple-system,
+          "Segoe UI", "Helvetica Neue", "Noto Sans", "Liberation Sans",
+          "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", sans-serif;
+      }
+
+      /* Container */
+      .wrap {
+        padding: 40px 24px;
+        width: min(90vw, 840px);
+        display: grid;
+        gap: 28px;
         justify-items: center;
-        gap: 24px;
       }
-      .output {
-        grid-row: 2;
-        font-size: clamp(32px, 6vw, 80px);
-        font-weight: 700;
+
+      /* Title in a stylish, bold, rounded display look (no external font) */
+      .title {
+        margin: 0;
+        font-size: clamp(28px, 5vw, 64px);
+        line-height: 1.05;
+        letter-spacing: 0.02em;
+        font-weight: 800;
+        text-transform: none;
+        /* Subtle multi-layered glow for epic feel */
+        text-shadow:
+          0 1px 0 rgba(255, 255, 255, 0.02),
+          0 6px 20px rgba(0, 150, 255, 0.08),
+          0 12px 40px rgba(0, 150, 255, 0.08);
+        background: linear-gradient(
+          180deg,
+          #eaf2ff 0%,
+          #d5e2ff 30%,
+          #c7d6ff 60%,
+          #a2baff 100%
+        );
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+      }
+
+      .subtitle {
+        margin: -10px 0 0 0;
+        font-size: clamp(14px, 2vw, 18px);
+        color: #aab3c0;
+        opacity: 0.9;
         text-align: center;
-        color: #000000;
-        line-height: 1.1;
-        min-height: 1.2em; /* reserve space so layout doesn't jump */
       }
+
+      /* Button wrapper adds a subtle hover glow without modifying the PNG */
       .button-wrap {
-        grid-row: 3;
+        position: relative;
+        display: inline-grid;
+        place-items: center;
+        transition: transform 180ms ease;
       }
-      .btn {
-        border: none;
-        background: transparent;
-        padding: 0;
-        cursor: pointer;
+      .button-wrap:hover {
+        transform: translateY(-1px);
       }
-      .btn img {
-        display: block;
-        width: min(260px, 40vw);
+      .button-glow {
+        position: absolute;
+        inset: -18px;
+        border-radius: 24px;
+        filter: blur(22px);
+        background: radial-gradient(
+          60% 60% at 50% 50%,
+          rgba(64, 160, 255, 0.18) 0%,
+          rgba(64, 160, 255, 0.05) 40%,
+          rgba(0, 0, 0, 0) 70%
+        );
+        opacity: 0.0;
+        transition: opacity 200ms ease;
+        pointer-events: none;
+      }
+      .button-wrap:hover .button-glow {
+        opacity: 1;
+      }
+
+      /* The PNG button itself */
+      .button {
+        width: clamp(220px, 28vw, 380px);
         height: auto;
+        display: block;
+        border-radius: 20px; /* keeps anti-aliased corners blending with bg */
+        image-rendering: auto;
+        box-shadow:
+          0 2px 10px rgba(0, 0, 0, 0.45),
+          0 10px 30px rgba(0, 0, 0, 0.35);
       }
-      /* Basic keyboard-focus outline for accessibility */
-      .btn:focus-visible {
-        outline: 3px solid #000;
-        outline-offset: 6px;
-        border-radius: 8px;
+
+      /* Optional caption under the button */
+      .hint {
+        margin-top: 6px;
+        font-size: 13px;
+        color: #8f98a6;
       }
-      /* Space above button is naturally the area containing .output */
+
+      /* Respect reduced motion */
+      @media (prefers-reduced-motion: reduce) {
+        .button-wrap,
+        .button-glow {
+          transition: none !important;
+        }
+      }
     </style>
   </head>
   <body>
-    <div class="wrap">
-      <div class="output" id="output" aria-live="polite" aria-atomic="true">
-        <!-- Random scale appears here -->
-      </div>
+    <main class="wrap">
+      <h1 class="title">Next Scale</h1>
+      <p class="subtitle">Epic, tasteful, and ready for your UI</p>
 
-      <div class="button-wrap">
-        <button class="btn" id="rollBtn" aria-label="Get a random scale">
-          <img src="button.png" alt="Generate Scale" />
-        </button>
-      </div>
-    </div>
+      <a class="button-wrap" href="#" aria-label="Next Scale">
+        <span class="button-glow" aria-hidden="true"></span>
+        <!-- If you truly need 'button.ong', change src and alt filename below -->
+        <img
+          class="button"
+          src="button.png"
+          width="760"
+          height="300"
+          alt="Button graphic: Next line break Scale"
+          decoding="async"
+          loading="eager"
+        />
+      </a>
 
-    <script>
-      // Predefined options
-      const NOTES = ["A", "B", "C", "D", "E", "F", "G"];
-      const MODES = [
-        "Ionian",
-        "Dorian",
-        "Phrygian",
-        "Lydian",
-        "Myxolydian",
-        "Aeolian",
-        "Locrian",
-      ];
-
-      // Utility to get a random item from an array
-      function randomChoice(arr) {
-        return arr[Math.floor(Math.random() * arr.length)];
-      }
-
-      // Generate a random scale label like "C — Dorian"
-      function generateScale() {
-        const note = randomChoice(NOTES);
-        const mode = randomChoice(MODES);
-        return note + " — " + mode;
-      }
-
-      // Update the display once
-      function refresh() {
-        const out = document.getElementById("output");
-        out.textContent = generateScale();
-      }
-
-      // Wire up button
-      document.getElementById("rollBtn").addEventListener("click", refresh);
-
-      // Initial value shown on page load
-      refresh();
-    </script>
+      <div class="hint">Place your button.png alongside this HTML file.</div>
+    </main>
   </body>
 </html>
