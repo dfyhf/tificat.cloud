@@ -56,7 +56,7 @@
 
       .wrap {
         padding: 40px 24px;
-        width: min(90vw, 840px);
+        width: min(92vw, 900px);
         display: grid;
         gap: 28px;
         justify-items: center;
@@ -81,6 +81,7 @@
         -webkit-background-clip: text;
         background-clip: text;
         color: transparent;
+        text-align: center;
       }
 
       .subtitle {
@@ -91,18 +92,57 @@
         text-align: center;
       }
 
-      .button-wrap {
+      .scale-card {
+        display: grid;
+        gap: 10px;
+        justify-items: center;
+        text-align: center;
+        background: rgba(255, 255, 255, 0.02);
+        border: 1px solid rgba(255, 255, 255, 0.06);
+        border-radius: 16px;
+        padding: clamp(16px, 4vw, 28px);
+        box-shadow: 0 8px 40px rgba(0, 0, 0, 0.35);
+        backdrop-filter: blur(4px);
+      }
+
+      .scale-name {
+        margin: 0;
+        font-weight: 800;
+        letter-spacing: 0.01em;
+        font-size: clamp(22px, 4vw, 42px);
+        color: #eaf2ff;
+        text-shadow: 0 2px 14px rgba(100, 170, 255, 0.12);
+      }
+
+      .meta {
+        margin: 0;
+        font-size: 14px;
+        color: #8f98a6;
+      }
+
+      /* Semantic button containing the PNG */
+      .png-button {
+        border: none;
+        background: transparent;
+        padding: 0;
+        cursor: pointer;
         position: relative;
         display: inline-grid;
         place-items: center;
-        transition: transform 180ms ease;
+        border-radius: 22px;
+        transition: transform 160ms ease;
       }
-      .button-wrap:hover {
+      .png-button:hover {
         transform: translateY(-1px);
       }
-      .button-wrap:active {
+      .png-button:active {
         transform: translateY(0);
       }
+      .png-button:focus-visible {
+        outline: 2px solid rgba(100, 170, 255, 0.7);
+        outline-offset: 6px;
+      }
+
       .button-glow {
         position: absolute;
         inset: -18px;
@@ -115,32 +155,34 @@
           rgba(0, 0, 0, 0) 70%
         );
         opacity: 0;
-        transition: opacity 200ms ease;
+        transition: opacity 180ms ease;
         pointer-events: none;
       }
-      .button-wrap:hover .button-glow,
-      .button-wrap[data-pressed="true"] .button-glow {
+      .png-button:hover .button-glow,
+      .png-button[data-pressed="true"] .button-glow {
         opacity: 1;
       }
 
-      .button {
+      .button-img {
         width: clamp(220px, 28vw, 380px);
         height: auto;
         display: block;
         border-radius: 20px;
-        image-rendering: auto;
         box-shadow: 0 2px 10px rgba(0, 0, 0, 0.45),
           0 10px 30px rgba(0, 0, 0, 0.35);
+        user-select: none;
+        -webkit-user-drag: none;
       }
 
       .hint {
         margin-top: 6px;
         font-size: 13px;
         color: #8f98a6;
+        text-align: center;
       }
 
       @media (prefers-reduced-motion: reduce) {
-        .button-wrap,
+        .png-button,
         .button-glow {
           transition: none !important;
         }
@@ -152,75 +194,135 @@
       <h1 class="title">Next Scale</h1>
       <p class="subtitle">Epic, tasteful, and ready for your UI</p>
 
-      <!-- Accessible button behaving like a real button -->
-      <div
-        id="nextScaleBtn"
-        class="button-wrap"
-        role="button"
-        tabindex="0"
-        aria-label="Next Scale"
-      >
-        <span class="button-glow" aria-hidden="true"></span>
-        <img
-          class="button"
-          src="button.png.jpg"
-          width="760"
-          height="300"
-          alt="Button graphic: Next line break Scale"
-          decoding="async"
-          loading="eager"
-          draggable="false"
-        />
-      </div>
+      <section class="scale-card" aria-live="polite" aria-atomic="true">
+        <h2 id="scaleName" class="scale-name">Loading…</h2>
+        <p id="scaleMeta" class="meta">Press the button for a random pair</p>
+
+        <!-- Real, accessible button element -->
+        <button
+          id="nextScaleBtn"
+          class="png-button"
+          type="button"
+          aria-label="Random note and mode"
+        >
+          <span class="button-glow" aria-hidden="true"></span>
+          <img
+            class="button-img"
+            src="button.png.jpg"
+            width="760"
+            height="300"
+            alt="Button graphic: Next on first line, Scale on second line"
+            decoding="async"
+            loading="eager"
+          />
+        </button>
+      </section>
 
       <div class="hint">
-        Put your button.ong next to this HTML. Press Enter or Space to activate.
+        Put a file named "button.png.jpg" next to this HTML. Click/tap or press
+        Enter/Space to pick a random note and random mode.
       </div>
     </main>
 
     <script>
-      // Basic script functionality for the PNG "button"
       (function () {
-        const el = document.getElementById("nextScaleBtn");
+        const NOTES = [
+          "C",
+          "C♯/D♭",
+          "D",
+          "D♯/E♭",
+          "E",
+          "F",
+          "F♯/G♭",
+          "G",
+          "G♯/A♭",
+          "A",
+          "A♯/B♭",
+          "B",
+        ];
 
-        function activate() {
-          // TODO: Replace with your desired action.
-          // Example 1: Navigate
-          // window.location.href = "/next";
+        // Common modes + a few useful ones
+        const MODES = [
+          "Ionian (Major)",
+          "Dorian",
+          "Phrygian",
+          "Lydian",
+          "Mixolydian",
+          "Aeolian (Natural Minor)",
+          "Locrian",
+          "Harmonic Minor",
+          "Melodic Minor",
+          "Pentatonic Major",
+          "Pentatonic Minor",
+          "Blues",
+          "Whole Tone",
+          "Chromatic",
+        ];
 
-          // Example 2: Emit an event or call a function
-          console.log("Next Scale activated");
+        const scaleEl = document.getElementById("scaleName");
+        const metaEl = document.getElementById("scaleMeta");
+        const btn = document.getElementById("nextScaleBtn");
 
-          // Optional quick visual feedback
-          el.dataset.pressed = "true";
-          window.setTimeout(() => {
-            el.dataset.pressed = "false";
-          }, 200);
+        const STORAGE_KEY = "next-scale:last";
+
+        function pick(arr) {
+          return arr[Math.floor(Math.random() * arr.length)];
         }
 
-        el.addEventListener("click", (e) => {
+        function chooseRandomPair() {
+          const note = pick(NOTES);
+          const mode = pick(MODES);
+          return { note, mode };
+        }
+
+        function render({ note, mode }) {
+          scaleEl.textContent = `${note} — ${mode}`;
+          metaEl.textContent = "Press again for another random pair";
+        }
+
+        function save(pair) {
+          try {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(pair));
+          } catch (_) {
+            /* ignore storage errors */
+          }
+        }
+
+        function load() {
+          try {
+            const raw = localStorage.getItem(STORAGE_KEY);
+            return raw ? JSON.parse(raw) : null;
+          } catch (_) {
+            return null;
+          }
+        }
+
+        function activate() {
+          const pair = chooseRandomPair();
+          render(pair);
+          save(pair);
+
+          // quick visual feedback
+          btn.dataset.pressed = "true";
+          setTimeout(() => (btn.dataset.pressed = "false"), 180);
+        }
+
+        // Init view from storage or first random
+        const initial = load() || chooseRandomPair();
+        render(initial);
+        save(initial);
+
+        // Events
+        btn.addEventListener("click", (e) => {
           e.preventDefault();
           activate();
         });
-
-        el.addEventListener("keydown", (e) => {
-          // Activate on Enter or Space
-          if (e.key === "Enter" || e.key === " ") {
+        // Enter triggers click on button by default; keep for consistency
+        btn.addEventListener("keydown", (e) => {
+          if (e.key === "Enter") {
             e.preventDefault();
             activate();
           }
-        });
-
-        // Prevent dragging the PNG
-        el.addEventListener("dragstart", (e) => e.preventDefault());
-
-        // Optional: focus ring for accessibility
-        el.addEventListener("focus", () => {
-          el.style.outline = "2px solid rgba(100, 170, 255, 0.6)";
-          el.style.outlineOffset = "6px";
-        });
-        el.addEventListener("blur", () => {
-          el.style.outline = "none";
         });
       })();
     </script>
