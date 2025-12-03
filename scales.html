@@ -19,6 +19,7 @@
         margin: 0;
         color: #e8eaed;
         background: #0d0f14;
+        /* Dark, textural background purely with CSS */
         background-image: radial-gradient(
             1200px 800px at 20% 10%,
             rgba(255, 255, 255, 0.06),
@@ -62,65 +63,20 @@
         justify-items: center;
       }
 
-      .title {
+      /* Result area: big, bold, clean */
+      #result {
         margin: 0;
-        font-size: clamp(28px, 5vw, 64px);
-        line-height: 1.05;
-        letter-spacing: 0.02em;
-        font-weight: 800;
-        text-shadow: 0 1px 0 rgba(255, 255, 255, 0.02),
-          0 6px 20px rgba(0, 150, 255, 0.08),
-          0 12px 40px rgba(0, 150, 255, 0.08);
-        background: linear-gradient(
-          180deg,
-          #eaf2ff 0%,
-          #d5e2ff 30%,
-          #c7d6ff 60%,
-          #a2baff 100%
-        );
-        -webkit-background-clip: text;
-        background-clip: text;
-        color: transparent;
         text-align: center;
-      }
-
-      .subtitle {
-        margin: -10px 0 0 0;
-        font-size: clamp(14px, 2vw, 18px);
-        color: #aab3c0;
-        opacity: 0.9;
-        text-align: center;
-      }
-
-      .scale-card {
-        display: grid;
-        gap: 10px;
-        justify-items: center;
-        text-align: center;
-        background: rgba(255, 255, 255, 0.02);
-        border: 1px solid rgba(255, 255, 255, 0.06);
-        border-radius: 16px;
-        padding: clamp(16px, 4vw, 28px);
-        box-shadow: 0 8px 40px rgba(0, 0, 0, 0.35);
-        backdrop-filter: blur(4px);
-      }
-
-      .scale-name {
-        margin: 0;
-        font-weight: 800;
+        font-weight: 900;
         letter-spacing: 0.01em;
-        font-size: clamp(22px, 4vw, 42px);
-        color: #eaf2ff;
-        text-shadow: 0 2px 14px rgba(100, 170, 255, 0.12);
+        line-height: 1.06;
+        font-size: clamp(36px, 8vw, 88px);
+        color: #eef3ff;
+        text-shadow: 0 2px 18px rgba(90, 160, 255, 0.18);
+        min-height: 1.2em; /* reserve space before first press */
       }
 
-      .meta {
-        margin: 0;
-        font-size: 14px;
-        color: #8f98a6;
-      }
-
-      /* Semantic button containing the PNG */
+      /* Real button element that displays the PNG */
       .png-button {
         border: none;
         background: transparent;
@@ -151,7 +107,7 @@
         background: radial-gradient(
           60% 60% at 50% 50%,
           rgba(64, 160, 255, 0.18) 0%,
-          rgba(64, 160, 255, 0.05) 40%,
+          rgba(64, 160, 255, 0.06) 40%,
           rgba(0, 0, 0, 0) 70%
         );
         opacity: 0;
@@ -164,7 +120,7 @@
       }
 
       .button-img {
-        width: clamp(220px, 28vw, 380px);
+        width: clamp(240px, 32vw, 420px);
         height: auto;
         display: block;
         border-radius: 20px;
@@ -172,13 +128,6 @@
           0 10px 30px rgba(0, 0, 0, 0.35);
         user-select: none;
         -webkit-user-drag: none;
-      }
-
-      .hint {
-        margin-top: 6px;
-        font-size: 13px;
-        color: #8f98a6;
-        text-align: center;
       }
 
       @media (prefers-reduced-motion: reduce) {
@@ -191,139 +140,75 @@
   </head>
   <body>
     <main class="wrap">
-      <h1 class="title">Next Scale</h1>
-      <p class="subtitle">Epic, tasteful, and ready for your UI</p>
+      <!-- Button -->
+      <button id="nextScaleBtn" class="png-button" type="button" aria-label="Next Scale">
+        <span class="button-glow" aria-hidden="true"></span>
+        <img
+          class="button-img"
+          src="button.png.jpg"
+          width="760"
+          height="300"
+          alt="Button graphic: Next on first line, Scale on second line"
+          decoding="async"
+          loading="eager"
+        />
+      </button>
 
-      <section class="scale-card" aria-live="polite" aria-atomic="true">
-        <h2 id="scaleName" class="scale-name">Loading…</h2>
-        <p id="scaleMeta" class="meta">Press the button for a random pair</p>
-
-        <!-- Real, accessible button element -->
-        <button
-          id="nextScaleBtn"
-          class="png-button"
-          type="button"
-          aria-label="Random note and mode"
-        >
-          <span class="button-glow" aria-hidden="true"></span>
-          <img
-            class="button-img"
-            src="button.png.jpg"
-            width="760"
-            height="300"
-            alt="Button graphic: Next on first line, Scale on second line"
-            decoding="async"
-            loading="eager"
-          />
-        </button>
-      </section>
-
-      <div class="hint">
-        Put a file named "button.png.jpg" next to this HTML. Click/tap or press
-        Enter/Space to pick a random note and random mode.
-      </div>
+      <!-- Result (separate element, large and bold) -->
+      <div id="result" aria-live="polite" aria-atomic="true"></div>
     </main>
 
     <script>
       (function () {
-        const NOTES = [
-          "C",
-          "C♯/D♭",
-          "D",
-          "D♯/E♭",
-          "E",
-          "F",
-          "F♯/G♭",
-          "G",
-          "G♯/A♭",
-          "A",
-          "A♯/B♭",
-          "B",
-        ];
-
-        // Common modes + a few useful ones
+        const NOTES = ["A", "B", "C", "D", "E", "F", "G"];
         const MODES = [
-          "Ionian (Major)",
+          "Ionian",
           "Dorian",
           "Phrygian",
           "Lydian",
-          "Mixolydian",
-          "Aeolian (Natural Minor)",
+          "Myxolydian",
+          "Aeolian",
           "Locrian",
-          "Harmonic Minor",
-          "Melodic Minor",
-          "Pentatonic Major",
-          "Pentatonic Minor",
-          "Blues",
-          "Whole Tone",
-          "Chromatic",
         ];
 
-        const scaleEl = document.getElementById("scaleName");
-        const metaEl = document.getElementById("scaleMeta");
         const btn = document.getElementById("nextScaleBtn");
-
-        const STORAGE_KEY = "next-scale:last";
+        const result = document.getElementById("result");
 
         function pick(arr) {
           return arr[Math.floor(Math.random() * arr.length)];
         }
 
-        function chooseRandomPair() {
-          const note = pick(NOTES);
-          const mode = pick(MODES);
-          return { note, mode };
+        function randomPair() {
+          return { note: pick(NOTES), mode: pick(MODES) };
         }
 
-        function render({ note, mode }) {
-          scaleEl.textContent = `${note} — ${mode}`;
-          metaEl.textContent = "Press again for another random pair";
-        }
-
-        function save(pair) {
-          try {
-            localStorage.setItem(STORAGE_KEY, JSON.stringify(pair));
-          } catch (_) {
-            /* ignore storage errors */
-          }
-        }
-
-        function load() {
-          try {
-            const raw = localStorage.getItem(STORAGE_KEY);
-            return raw ? JSON.parse(raw) : null;
-          } catch (_) {
-            return null;
-          }
+        function render(pair) {
+          result.textContent = `${pair.note} — ${pair.mode}`;
         }
 
         function activate() {
-          const pair = chooseRandomPair();
+          const pair = randomPair();
           render(pair);
-          save(pair);
 
           // quick visual feedback
           btn.dataset.pressed = "true";
-          setTimeout(() => (btn.dataset.pressed = "false"), 180);
+          setTimeout(() => (btn.dataset.pressed = "false"), 160);
         }
 
-        // Init view from storage or first random
-        const initial = load() || chooseRandomPair();
-        render(initial);
-        save(initial);
-
-        // Events
+        // Event wiring
         btn.addEventListener("click", (e) => {
           e.preventDefault();
           activate();
         });
-        // Enter triggers click on button by default; keep for consistency
         btn.addEventListener("keydown", (e) => {
           if (e.key === "Enter") {
             e.preventDefault();
             activate();
           }
         });
+
+        // Optional: initial placeholder
+        result.textContent = "";
       })();
     </script>
   </body>
